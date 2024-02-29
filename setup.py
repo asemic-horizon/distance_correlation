@@ -6,6 +6,9 @@ from setuptools import setup
 import os, urllib.request, zipfile
 __version__ = "0.0.1"
 
+with open('README.md', 'r') as f:
+    long_description = f.read()
+
 # this class is ChatGPT's idea of how to bring eigen3 in. I'm sure there's a more elegant way to do this.
 class CustomBuildExt(build_ext):
     def run(self):
@@ -37,8 +40,8 @@ class CustomBuildExt(build_ext):
 
 ext_modules = [
     Pybind11Extension(
-        "distance_correlation",
-        ["src/distance_correlation.cpp"],
+        "distance_metrics",
+        ["src/distance_metrics.cpp"],
         define_macros=[("VERSION_INFO", __version__)],
     ),
 ]
@@ -49,8 +52,9 @@ setup(
     author="Diego Navarro",
     author_email="the.electric.me@gmail.com",
     url="https://github.com/asemic-horizon/distance_correlation",
-    description="Distance covariances and correlations",
-    long_description="Computes distance covariances/correlations between vectors and distance covariance/correlation matrices for data matrices",
+    description="Computes distance covariances/correlations between vectors and distance covariance/correlation matrices for data matrices",
+    long_description=long_description,
+    long_description_content_type="text/markdown",  
     ext_modules=ext_modules,
     #extras_require={"test": "pytest"}, no test suite yet
     cmdclass={"build_ext": CustomBuildExt},
