@@ -4,7 +4,7 @@ from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 from setuptools import setup
 import os, urllib.request, zipfile
-__version__ = "0.0.1"
+__version__ = "0.0.1a"
 
 with open('README.md', 'r') as f:
     long_description = f.read()

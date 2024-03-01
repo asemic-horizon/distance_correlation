@@ -14,30 +14,38 @@
 
 #include <Eigen/Dense>
 
-double compute_mean_distance(const Eigen::VectorXd& vec) {
-    double sum = 0.0;
-    int n = vec.size();
+
+Eigen::MatrixXd distance_matrix(const Eigen::VectorXd& x){
+    int n = x.size();
+    Eigen::MatrixXd A(n, n);
     for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            sum += (std::abs(vec[i] - vec[j]))/(n*n);
+        for (int j = 0; j <= i; ++j) {
+            A(i, j) = std::abs(x[i] - x[j]);
+            A(j, i) = A(i, j);
         }
     }
-    return sum;
+    return A;   
 }
 
 double distance_covariance(const Eigen::VectorXd& x, const Eigen::VectorXd& y) {
     int n = x.size();
-    double mean_x = compute_mean_distance(x);
-    double mean_y = compute_mean_distance(y);
+    Eigen::MatrixXd A = distance_matrix(x);
+    Eigen::MatrixXd B = distance_matrix(y);
 
-    double cov = 0.0;
+    double D = 0.0;
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
-            cov += (std::abs(x[i] - x[j]) - mean_x) * (std::abs(y[i] - y[j]) - mean_y)/(n * n);
+            D += (A(i,j) * B(i,j))/(n * n);
         }
     }
 
-    return cov;
+    for (int i = 0; i < n; ++i) {
+        D -= (A.row(i).sum() * B.row(i).sum())/(n * n * n);
+    }
+
+    D -= ((A.sum() * B.sum())/(n * n)) / (n * n * n * n);
+
+    return D;
 }
 
 double distance_correlation(const Eigen::VectorXd& x, const Eigen::VectorXd& y) {
