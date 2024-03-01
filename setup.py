@@ -2,9 +2,9 @@
 # Available at setup time due to pyproject.toml
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
-from setuptools import setup
+from setuptools import setup, find_packages
 import os, urllib.request, zipfile
-__version__ = "0.0.1a"
+__version__ = "0.0.2"
 
 with open('README.md', 'r') as f:
     long_description = f.read()
@@ -40,9 +40,11 @@ class CustomBuildExt(build_ext):
 
 ext_modules = [
     Pybind11Extension(
-        "distance_metrics",
-        ["src/distance_metrics.cpp"],
+        "distance_correlation.distance_metrics",
+        ["src/distance_correlation/distance_metrics.cpp"],
         define_macros=[("VERSION_INFO", __version__)],
+        extra_compile_args=['-std=c++11', '-O3', '-fopenmp'],  
+        extra_link_args=['-fopenmp']
     ),
 ]
 
@@ -60,4 +62,6 @@ setup(
     cmdclass={"build_ext": CustomBuildExt},
     zip_safe=False,
     python_requires=">=3.9",
+    packages=['distance_correlation'],
+    package_dir={"distance_correlation": "src/distance_correlation/"},
 )
