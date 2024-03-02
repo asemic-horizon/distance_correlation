@@ -53,6 +53,16 @@ double distance_covariance(const Eigen::VectorXd& x, const Eigen::VectorXd& y) {
     return D;
 }
 
+
+double distance_variance(const Eigen::VectorXd& x) {
+    // the direct computation of distance variance
+    int n = x.size();
+    Eigen::MatrixXd A = distance_matrix(x);
+
+    double D = A.cwiseProduct(A).sum() / (n*n);
+    return D;
+}
+
 double distance_correlation(const Eigen::VectorXd& x, const Eigen::VectorXd& y) {
     Eigen::MatrixXd A;
     Eigen::MatrixXd B;
@@ -97,6 +107,8 @@ Eigen::MatrixXd distance_correlation_matrix(const Eigen::MatrixXd& X) {
     std::vector<double> var(n);
     double cov_xy;
 
+    // precompute all the distance matrices and
+    // the variances/self-correlations
     #pragma omp parallel for
     for (int i = 0; i<n; ++i) {
         As[i] = distance_matrix(X.col(i));
@@ -121,6 +133,7 @@ Eigen::MatrixXd distance_correlation_matrix(const Eigen::MatrixXd& X) {
 PYBIND11_MODULE(distance_metrics, m) {
     m.def("distance_covariance", &distance_covariance, "Compute distance covariance between two vectors");
     m.def("distance_correlation", &distance_correlation, "Compute distance correlation between two vectors");
+    m.def("distance_variance", &distance_variance, "Compute distance variance of a vector");
     m.def("distance_covariance_matrix", &distance_covariance_matrix, "Compute distance covariance matrix");
     m.def("distance_correlation_matrix", &distance_correlation_matrix, "Compute distance correlation matrix");
 
