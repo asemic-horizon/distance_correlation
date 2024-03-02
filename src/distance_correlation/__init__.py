@@ -1,1 +1,1 @@
-from .bindings import *
+from .distance_metrics import *
