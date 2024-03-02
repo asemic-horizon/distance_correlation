@@ -10,6 +10,10 @@
 
 
 Eigen::MatrixXd distance_matrix(const Eigen::VectorXd& x){
+    // this computes a centered distance matrix
+    // in the sense that it removes row and column means
+    // so all rows and columns sum to 0. 
+
     int n = x.size();
     Eigen::MatrixXd A(n, n);
     for (int i = 0; i < n; ++i) {
@@ -19,6 +23,8 @@ Eigen::MatrixXd distance_matrix(const Eigen::VectorXd& x){
     }
     Eigen::VectorXd row_mean = A.rowwise().mean();
     Eigen::VectorXd col_mean = A.colwise().mean();
+    // the overall matrix mean is added back because
+    // we're subtracting it twice by removing row and column means
     double grand_mean = A.mean();
 
     for (int i = 0; i < n; ++i) {
@@ -30,10 +36,13 @@ Eigen::MatrixXd distance_matrix(const Eigen::VectorXd& x){
     return A;   
 }
 
-
-
-
 double distance_covariance(const Eigen::VectorXd& x, const Eigen::VectorXd& y) {
+    // the direct computation of distance covariance (without 
+    // clever math tricks):
+    // D = expected value of (centered distance x) * (centered distance y)
+    // compare Pearson's covariance formula:
+    // R = expected (centered x) * (centered y)
+
     int n = x.size();
     Eigen::MatrixXd A;
     Eigen::MatrixXd B;
