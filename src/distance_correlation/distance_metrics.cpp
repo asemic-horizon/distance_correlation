@@ -1,14 +1,7 @@
 #include <pybind11/pybind11.h>
-
-// python_example does this https://github.com/pybind/python_example/blob/master/src/main.cpp
-// I'm not exactly sure why; I'm cargo-culting it to follow the entire example
-#define STRINGIFY(x) #x
-#define MACRO_STRINGIFY(x) STRINGIFY(x)
-
-
 #include <pybind11/stl.h>
 #include <pybind11/eigen.h>
-#include<omp.h>
+#include <omp.h>
 #include <vector>
 #include <cmath>
 #include <numeric>
@@ -112,6 +105,9 @@ Eigen::MatrixXd distance_correlation_matrix(const Eigen::MatrixXd& X) {
     return D;
 }
 
+// these macros so that python's setup.py can inject a version number here
+#define STRINGIFY(x) #x
+#define MACRO_STRINGIFY(x) STRINGIFY(x)
 
 PYBIND11_MODULE(distance_metrics, m) {
     m.def("distance_covariance", &distance_covariance, "Compute distance covariance between two vectors");
